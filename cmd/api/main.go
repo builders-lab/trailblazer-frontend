@@ -13,7 +13,6 @@ import (
 
 func main() {
 	godotenv.Load(".env")
-	
 
 	portString := os.Getenv("PORT")
 
@@ -26,7 +25,6 @@ func main() {
 
 	// Initializing router
 	router := chi.NewRouter()
-
 
 	// Liberal cors configuration for development
 	router.Use(cors.Handler(cors.Options{
@@ -53,7 +51,7 @@ func main() {
 	}
 
 	log.Printf("Server Starting on port %v", portString)
-	
+
 	err := srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)

@@ -1,6 +1,5 @@
 package models
 
-
 type Repository struct {
 	Name     string `json:"name"`
 	CloneURL string `json:"clone_url"`

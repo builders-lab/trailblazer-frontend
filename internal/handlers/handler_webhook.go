@@ -12,10 +12,11 @@ import (
 	"strings"
 
 	"github.com/builders-lab/trailblazer-frontend/internal/models"
+	"github.com/builders-lab/trailblazer-frontend/internal/service"
 )
 
 func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
-	
+
 	// Obvious
 	webhookSecret := cfg.WHSecret
 
@@ -33,7 +34,7 @@ func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	
+
 	// Getting token
 	signatureHeader := r.Header.Get("X-Hub-Signature-256")
 	if signatureHeader == "" {
@@ -52,7 +53,7 @@ func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 	mac.Write(body)
 	expectedSig := mac.Sum(nil)
 	expectedSigHex := hex.EncodeToString(expectedSig)
-	
+
 	// comparing tokens
 	if !hmac.Equal([]byte(receivedSigHex), []byte(expectedSigHex)) {
 		log.Println("Alert! Invalid signature detected.")
@@ -61,7 +62,7 @@ func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var event models.PushEvent
-	
+
 	// Upon verification we parse it
 	if err := json.Unmarshal(body, &event); err != nil {
 		log.Printf("Error parsing JSON: %v", err)
@@ -69,9 +70,11 @@ func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	repoURL := event.Repository.CloneURL
 
-	
-	// TODO: A common pretty printing function for all the structs 
+	go service.ForwardToBuilder(repoURL)
+
+	// TODO: A common pretty printing function for all the structs
 	// Printing it
 	fmt.Println("------------------------------------------------")
 	fmt.Printf("⚡ Change Detected in Repo: %s\n", event.Repository.Name)
