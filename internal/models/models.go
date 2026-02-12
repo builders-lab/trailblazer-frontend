@@ -1,19 +1,24 @@
 package models
 
+type Repository struct {
+	Name     string `json:"name"`
+	CloneURL string `json:"clone_url"`
+	HTMLURL  string `json:"html_url"`
+}
+
+type Author struct {
+	Name string `json:"name"`
+}
+
+type Commit struct {
+	ID      string `json:"id"`
+	Message string `json:"message"`
+	Author  Author `json:"author"`
+}
+
 type PushEvent struct {
-	Ref        string `json:"ref"`
-	Repository struct {
-		Name string `json:"name"`
-		URL  string `json:"html_url"`
-	} `json:"repository"`
-	Pusher struct {
-		Name string `json:"name"`
-	} `json:"pusher"`
-	Commits []struct {
-		ID      string `json:"id"`
-		Message string `json:"message"`
-		Author  struct {
-			Name string `json:"name"`
-		} `json:"author"`
-	} `json:"commits"`
+	Ref        string     `json:"ref"`
+	Repository Repository `json:"repository"`
+	Pusher     Author     `json:"pusher"`
+	Commits    []Commit   `json:"commits"`
 }
