@@ -68,6 +68,8 @@ func (cfg *ApiConfig) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
+
+
 	
 	// TODO: A common pretty printing function for all the structs 
 	// Printing it
